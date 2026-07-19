@@ -1,5 +1,6 @@
 import ArrowButton from "./components/ArrowButton";
 import CurtainFooter from "./components/CurtainFooter";
+import HoverSpots from "./components/HoverSpots";
 import Reveal from "./components/Reveal";
 import ScrollProgress from "./components/ScrollProgress";
 import SocialLinks from "./components/SocialLinks";
@@ -45,7 +46,10 @@ export default function Home() {
             <ArrowButton targetId="about" className="absolute bottom-4 left-4" />
           </figure>
 
-          <div className="col-span-12 self-end sm:col-span-6 md:col-span-3 md:col-start-8 lg:col-start-7">
+          {/* Invisible hover spots filling the empty right space */}
+          <HoverSpots className="hidden md:col-span-5 md:col-start-8 md:row-start-1 md:grid md:self-stretch md:pb-14 lg:col-span-6 lg:col-start-7" />
+
+          <div className="col-span-12 self-end sm:col-span-6 md:col-span-3 md:col-start-8 md:row-start-1 lg:col-start-7">
             <p className="border-t-2 border-black pt-3 text-xs font-bold tracking-[0.2em] uppercase">
               (01) — I love pizza.
             </p>
