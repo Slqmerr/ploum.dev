@@ -1,10 +1,11 @@
 "use client";
 
-import { useRef, type MouseEvent } from "react";
+import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
+import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
 
-gsap.registerPlugin(useGSAP);
+gsap.registerPlugin(useGSAP, ScrambleTextPlugin);
 
 const NAV_LINKS = [
   { href: "#work", label: "Work" },
@@ -12,23 +13,11 @@ const NAV_LINKS = [
   { href: "#contact", label: "Contact" },
 ];
 
-function Chars({ text }: { text: string }) {
-  return (
-    <>
-      {[...text].map((char, i) => (
-        <span key={i} className="roll-char inline-block will-change-transform">
-          {char}
-        </span>
-      ))}
-    </>
-  );
-}
-
 export default function TopHeader() {
   const scope = useRef<HTMLElement>(null);
 
-  const { contextSafe } = useGSAP(
-    () => {
+  useGSAP(
+    (context, contextSafe) => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         gsap.set(".header-item", { clearProps: "transform" });
         gsap.set(".header-line", { clearProps: "transform" });
@@ -54,19 +43,38 @@ export default function TopHeader() {
         },
         "-=0.55"
       );
+
+      // Hover scrambles: the label flickers through random uppercase glyphs
+      // and resolves back to itself. Only one tween per link is ever alive —
+      // the previous one is killed before a new one starts — so rapid
+      // re-hovers never fight.
+      const cleanups = [...scope.current!.querySelectorAll("a")].map((link) => {
+        const target = link.querySelector<HTMLElement>(".nav-label")!;
+        const label = target.textContent ?? "";
+        let tween: gsap.core.Tween | null = null;
+
+        const enter = contextSafe!(() => {
+          tween?.kill();
+          tween = gsap.to(target, {
+            duration: 0.6,
+            scrambleText: { text: label, chars: "upperCase", speed: 0.5 },
+          });
+        });
+
+        link.addEventListener("mouseenter", enter);
+
+        return () => {
+          link.removeEventListener("mouseenter", enter);
+          tween?.kill();
+          // A kill mid-flicker would otherwise strand random glyphs.
+          target.textContent = label;
+        };
+      });
+
+      return () => cleanups.forEach((cleanup) => cleanup());
     },
     { scope }
   );
-
-  const roll = contextSafe((e: MouseEvent<HTMLAnchorElement>, to: number) => {
-    gsap.to(e.currentTarget.querySelectorAll(".roll-char"), {
-      yPercent: to,
-      duration: 0.4,
-      ease: "power3.out",
-      stagger: 0.025,
-      overwrite: "auto",
-    });
-  });
 
   return (
     <header
@@ -99,17 +107,9 @@ export default function TopHeader() {
               className="header-item block will-change-transform"
               style={{ transform: "translateY(115%)" }}
             >
-              <a
-                href={href}
-                className="relative block overflow-hidden"
-                onMouseEnter={(e) => roll(e, -100)}
-                onMouseLeave={(e) => roll(e, 0)}
-              >
-                <span className="block">
-                  <Chars text={label} />
-                </span>
-                <span aria-hidden className="absolute top-full left-0 block">
-                  <Chars text={label} />
+              <a href={href} aria-label={label} className="block">
+                <span aria-hidden className="nav-label block">
+                  {label}
                 </span>
               </a>
             </span>

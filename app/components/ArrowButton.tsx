@@ -75,11 +75,11 @@ export default function ArrowButton({
       });
 
       const onEnter = contextSafe!(() => {
-        gsap.to([spin, drop], { timeScale: 3.5, duration: 0.4 });
+        gsap.to([spin, drop], { timeScale: 2, duration: 0.5, overwrite: true });
       });
 
       const onLeave = contextSafe!(() => {
-        gsap.to([spin, drop], { timeScale: 1, duration: 0.6 });
+        gsap.to([spin, drop], { timeScale: 1, duration: 0.8, overwrite: true });
         gsap.to(scope.current, {
           x: 0,
           y: 0,
