@@ -70,7 +70,7 @@ export default function AboutBand() {
       className="-mx-4 mt-14 bg-black px-4 py-20 text-background md:-mx-8 md:mt-20 md:px-8 md:py-28"
     >
       <p className="text-[0.65rem] font-bold tracking-[0.2em] uppercase md:text-xs">
-        (02) — About
+        (03) — About
       </p>
       <p className="mt-8 max-w-5xl text-[clamp(1.5rem,3.6vw,3.4rem)] leading-[1.1] font-black tracking-[-0.02em] uppercase">
         {WORDS.map(({ text, artistic }, i) => (

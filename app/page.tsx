@@ -56,11 +56,11 @@ export default function Home() {
           </div>
         </section>
 
-        {/* Manifesto — black band; flips the difference-blend header white */}
-        <AboutBand />
-
         {/* Pinned horizontal work showcase — vertical scroll pans the wall */}
         <WorkShowcase />
+
+        {/* Manifesto — black band; flips the difference-blend header white */}
+        <AboutBand />
 
         {/* Scroll-velocity marquee divider */}
         <Marquee />
