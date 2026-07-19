@@ -1,5 +1,8 @@
+import AboutBand from "./components/AboutBand";
 import ArrowButton from "./components/ArrowButton";
 import CurtainFooter from "./components/CurtainFooter";
+import Marquee from "./components/Marquee";
+import WorkShowcase from "./components/WorkShowcase";
 import HoverSpots from "./components/HoverSpots";
 import Reveal from "./components/Reveal";
 import ScrollProgress from "./components/ScrollProgress";
@@ -35,10 +38,7 @@ export default function Home() {
         </section>
 
         {/* Middle section — asymmetrical */}
-        <section
-          id="work"
-          className="mt-10 grid grid-cols-12 items-end gap-4 md:mt-16"
-        >
+        <section className="mt-10 grid grid-cols-12 items-end gap-4 md:mt-16">
           <figure className="relative col-span-12 aspect-[3/2] border-2 border-black bg-[#e2d9cf] sm:col-span-10 md:col-span-7 md:aspect-[16/9] lg:col-span-6">
             <span className="absolute top-4 left-4 text-[0.6rem] font-bold tracking-[0.35em] uppercase">
               Portrait — 01
@@ -56,8 +56,17 @@ export default function Home() {
           </div>
         </section>
 
+        {/* Manifesto — black band; flips the difference-blend header white */}
+        <AboutBand />
+
+        {/* Pinned horizontal work showcase — vertical scroll pans the wall */}
+        <WorkShowcase />
+
+        {/* Scroll-velocity marquee divider */}
+        <Marquee />
+
         {/* Bottom typography */}
-        <section id="about" className="mt-14 flex flex-1 items-end justify-end">
+        <section className="mt-14 flex flex-1 items-end justify-end">
           <h2 className="text-right text-[clamp(2.8rem,9.6vw,10.5rem)] leading-[0.85] font-black tracking-[-0.04em] uppercase select-none">
             <Reveal lines={["Ioannis", "Ploumakis"]} />
           </h2>

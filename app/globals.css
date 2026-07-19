@@ -23,6 +23,17 @@ body {
     sans-serif;
 }
 
+/* Hollow display type for the marquee strip. The fill is opaque (page
+   background) and painted over the stroke, hiding the inner stroke halves
+   and the overlapping outlines of tightly-tracked neighbors — a transparent
+   fill would let every glyph's stroke show through every other's. The
+   stroke is 3px because the fill covers its inner half. */
+.text-outline {
+  -webkit-text-stroke: 3px var(--foreground);
+  color: var(--background);
+  paint-order: stroke fill;
+}
+
 /* Morphed state for a single letter of an artistic word: the GSAP hover
    cascade toggles this char by char, swapping the brutalist sans for the
    italic serif mid-hop. */

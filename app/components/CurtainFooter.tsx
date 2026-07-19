@@ -54,7 +54,7 @@ export default function CurtainFooter() {
               TopHeader (which floats above the glass) leaves free. */}
           <div className="my-auto flex flex-col gap-4">
             <p className="text-[0.65rem] font-bold tracking-[0.2em] uppercase md:text-xs">
-              (02) — Have an idea? Let&apos;s talk.
+              (04) — Have an idea? Let&apos;s talk.
             </p>
             <a
               href="mailto:gploumakis24@gmail.com"

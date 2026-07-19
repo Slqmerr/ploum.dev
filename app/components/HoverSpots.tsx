@@ -12,12 +12,14 @@ export default function HoverSpots({ className = "" }: { className?: string }) {
   return (
     <div
       aria-hidden
-      className={`grid-cols-2 grid-rows-2 gap-4 select-none ${className}`}
+      className={`relative grid-cols-2 grid-rows-2 select-none ${className}`}
     >
       {SPOTS.map(({ id, src, alt }) => (
-        <div key={id} className="group relative">
-          {/* invisible/visible only — reveal must stay instant, no transitions */}
-          <div className="invisible absolute inset-0 overflow-hidden border-2 border-black bg-[#e2d9cf] group-hover:visible">
+        <div key={id} className="group">
+          {/* Fills the whole grid, not just this cell. pointer-events-none so a
+              visible overlay can't steal :hover from the sibling spots; visibility
+              only — the reveal must stay instant, no transitions. */}
+          <div className="pointer-events-none invisible absolute inset-0 overflow-hidden border-2 border-black bg-[#e2d9cf] group-hover:visible">
             {src ? (
               <Image src={src} alt={alt} fill className="object-cover" />
             ) : (
