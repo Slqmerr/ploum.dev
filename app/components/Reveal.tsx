@@ -28,11 +28,14 @@ export default function Reveal({
   delay = 0,
   className = "",
   highlight = false,
+  artisticWords = [],
 }: {
   lines: string[];
   delay?: number;
   className?: string;
   highlight?: boolean;
+  /** Words that swap to the artistic italic serif while hovered */
+  artisticWords?: string[];
 }) {
   const scope = useRef<HTMLSpanElement>(null);
 
@@ -119,6 +122,67 @@ export default function Reveal({
         });
       };
 
+      const enableArtisticHover = () => {
+        const words = gsap.utils.toArray<HTMLElement>(
+          ".artistic-word",
+          scope.current
+        );
+
+        words.forEach((word) => {
+          if (!contextSafe) return;
+          const chars = word.querySelectorAll<HTMLElement>(".reveal-char");
+          let tl: gsap.core.Timeline | null = null;
+
+          // Each letter hops, swaps typeface at the apex, and lands with a
+          // small bounce — cascading left to right. Leaving runs the same
+          // cascade back to the sans. Killing the previous timeline lets a
+          // mid-cascade reversal pick up from wherever each letter is.
+          const cascade = contextSafe((artistic: boolean) => {
+            tl?.kill();
+            tl = gsap.timeline();
+            chars.forEach((char, i) => {
+              const at = i * 0.04;
+              tl!
+                .to(
+                  char,
+                  {
+                    yPercent: -18,
+                    rotation: artistic ? -8 : 8,
+                    duration: 0.12,
+                    ease: "power2.out",
+                    onComplete: () =>
+                      char.classList.toggle("artistic-char", artistic),
+                  },
+                  at
+                )
+                .to(
+                  char,
+                  {
+                    yPercent: 0,
+                    rotation: 0,
+                    duration: 0.25,
+                    ease: "back.out(2.5)",
+                  },
+                  at + 0.12
+                );
+            });
+          });
+
+          const onEnter = () => cascade(true);
+          const onLeave = () => cascade(false);
+
+          word.addEventListener("mouseenter", onEnter);
+          word.addEventListener("mouseleave", onLeave);
+          cleanups.push(() => {
+            word.removeEventListener("mouseenter", onEnter);
+            word.removeEventListener("mouseleave", onLeave);
+            tl?.kill();
+          });
+
+          if (word.matches(":hover")) onEnter();
+        });
+      };
+
       // y: 0 clears the inline translateY(115%) no-flash fallback, which GSAP
       // would otherwise parse as a lingering pixel offset.
       gsap.fromTo(
@@ -137,7 +201,10 @@ export default function Reveal({
             start: "top 92%",
             once: true,
           },
-          onComplete: highlight ? enableHighlight : undefined,
+          onComplete: () => {
+            if (highlight) enableHighlight();
+            enableArtisticHover();
+          },
         }
       );
 
@@ -152,7 +219,13 @@ export default function Reveal({
         <span key={line} className="reveal-line block overflow-hidden">
           {line.split(" ").map((word, wi, words) => (
             <Fragment key={wi}>
-              <span className="relative inline-block whitespace-nowrap">
+              <span
+                className={`relative inline-block whitespace-nowrap ${
+                  artisticWords.includes(word)
+                    ? "artistic-word motion-reduce:hover:font-artistic motion-reduce:hover:normal-case motion-reduce:hover:italic"
+                    : ""
+                }`}
+              >
                 {[...word].map((char, ci) => (
                   <span
                     key={ci}
@@ -162,7 +235,9 @@ export default function Reveal({
                     {char}
                   </span>
                 ))}
-                {highlight && (
+                {/* Artistic words trade the selection sweep for the italic
+                    serif swap alone — no block behind the glyphs. */}
+                {highlight && !artisticWords.includes(word) && (
                   <span
                     aria-hidden
                     className="sweep-overlay pointer-events-none absolute bg-black text-background select-none"

@@ -20,18 +20,11 @@ export default function TopHeader() {
     (context, contextSafe) => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         gsap.set(".header-item", { clearProps: "transform" });
-        gsap.set(".header-line", { clearProps: "transform" });
         return;
       }
 
-      const tl = gsap.timeline({ delay: 0.15 });
-
       // y: 0 clears the inline no-flash fallback transforms.
-      tl.fromTo(
-        ".header-line",
-        { scaleX: 0 },
-        { scaleX: 1, duration: 1, ease: "power3.inOut" }
-      ).fromTo(
+      gsap.fromTo(
         ".header-item",
         { yPercent: 115, y: 0 },
         {
@@ -40,8 +33,8 @@ export default function TopHeader() {
           duration: 0.9,
           ease: "power4.out",
           stagger: 0.09,
-        },
-        "-=0.55"
+          delay: 0.3,
+        }
       );
 
       // Hover scrambles: the label flickers through random uppercase glyphs
@@ -77,16 +70,16 @@ export default function TopHeader() {
   );
 
   return (
+    // Sticks in place while the page scrolls; z-40 keeps it painting above
+    // the curtain footer (z-30) so the nav floats on the glass at the end.
+    // mix-blend-difference + white text inverts against whatever scrolls
+    // beneath: near-black over the cream page, flipping to white where the
+    // dark hero type passes under. Requires no stacking context between here
+    // and the root (see main in page.tsx).
     <header
       ref={scope}
-      className="relative grid grid-cols-2 gap-x-6 gap-y-3 pb-4 text-[0.65rem] leading-tight font-bold tracking-[0.15em] uppercase md:grid-cols-4 md:text-xs"
+      className="sticky top-5 z-40 grid grid-cols-2 gap-x-6 gap-y-3 text-[0.65rem] leading-tight font-bold tracking-[0.15em] text-white uppercase mix-blend-difference md:top-6 md:grid-cols-4 md:text-xs"
     >
-      <span
-        aria-hidden
-        className="header-line absolute bottom-0 left-0 h-0.5 w-full origin-left bg-black"
-        style={{ transform: "scaleX(0)" }}
-      />
-
       {["Ploum", "Currently front end engineer", "Based in Larissa, Greece"].map(
         (text) => (
           <p key={text} className="overflow-hidden">
@@ -94,7 +87,7 @@ export default function TopHeader() {
               className="header-item block will-change-transform"
               style={{ transform: "translateY(115%)" }}
             >
-              {text}
+              <span className="liquid-text">{text}</span>
             </span>
           </p>
         )
@@ -108,7 +101,7 @@ export default function TopHeader() {
               style={{ transform: "translateY(115%)" }}
             >
               <a href={href} aria-label={label} className="block">
-                <span aria-hidden className="nav-label block">
+                <span aria-hidden className="nav-label liquid-text block">
                   {label}
                 </span>
               </a>

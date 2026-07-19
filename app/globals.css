@@ -9,6 +9,7 @@
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-inter);
+  --font-artistic: var(--font-playfair);
 }
 
 html {
@@ -20,6 +21,49 @@ body {
   color: var(--foreground);
   font-family: var(--font-inter), "Helvetica Neue", Helvetica, Arial,
     sans-serif;
+}
+
+/* Morphed state for a single letter of an artistic word: the GSAP hover
+   cascade toggles this char by char, swapping the brutalist sans for the
+   italic serif mid-hop. */
+.artistic-char {
+  font-family: var(--font-artistic), Georgia, serif;
+  font-style: italic;
+  text-transform: none;
+}
+
+/* Liquid sheen for the header's mix-blend-difference text: the glyphs are
+   filled with a slowly drifting white-to-silver gradient, so after the
+   difference inversion the ink shifts tone like liquid instead of sitting
+   flat. Opaque stops only — alpha would wash the inversion out to gray. */
+.liquid-text {
+  background-image: linear-gradient(
+    90deg,
+    #ffffff,
+    #c9c9c9 30%,
+    #f2f2f2 55%,
+    #d4d4d4 75%,
+    #ffffff
+  );
+  background-size: 200% 100%;
+  -webkit-background-clip: text;
+  background-clip: text;
+  color: transparent;
+  animation: liquid-flow 9s linear infinite;
+}
+
+/* Size 200% + shift 200% lands exactly one tile over, and the gradient's
+   ends match, so the loop has no visible seam. */
+@keyframes liquid-flow {
+  to {
+    background-position: 200% 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .liquid-text {
+    animation: none;
+  }
 }
 
 /* Grainy paper texture: SVG fractal noise over the flat background */
