@@ -4,6 +4,7 @@ import CurtainFooter from "./components/CurtainFooter";
 import Marquee from "./components/Marquee";
 import WorkShowcase from "./components/WorkShowcase";
 import HoverSpots from "./components/HoverSpots";
+import PizzaEasterEgg from "./components/PizzaEasterEgg";
 import Reveal from "./components/Reveal";
 import ScrollProgress from "./components/ScrollProgress";
 import SocialLinks from "./components/SocialLinks";
@@ -29,7 +30,7 @@ export default function Home() {
           <h1 className="text-[clamp(3.4rem,9.6vw,12rem)] leading-[0.85] font-black tracking-[-0.04em] uppercase select-none">
             <Reveal
               lines={["Stay Creative"]}
-              delay={0.2}
+              delay={1.6}
               highlight
               artisticWords={["Creative"]}
             />
@@ -50,9 +51,7 @@ export default function Home() {
           <HoverSpots className="hidden md:col-span-5 md:col-start-8 md:row-start-1 md:grid md:self-stretch md:pb-14 lg:col-span-6 lg:col-start-7" />
 
           <div className="col-span-12 self-end sm:col-span-6 md:col-span-3 md:col-start-8 md:row-start-1 lg:col-start-7">
-            <p className="border-t-2 border-black pt-3 text-xs font-bold tracking-[0.2em] uppercase">
-              (01) — I love pizza.
-            </p>
+            <PizzaEasterEgg />
           </div>
         </section>
 

@@ -23,6 +23,13 @@ body {
     sans-serif;
 }
 
+/* Native cursor hidden only while the custom dot is active (fine pointer,
+   full motion — the class is added from CustomCursor). */
+html.custom-cursor,
+html.custom-cursor * {
+  cursor: none !important;
+}
+
 /* Hollow display type for the marquee strip. The fill is opaque (page
    background) and painted over the stroke, hiding the inner stroke halves
    and the overlapping outlines of tightly-tracked neighbors — a transparent

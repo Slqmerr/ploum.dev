@@ -33,7 +33,8 @@ export default function TopHeader() {
           duration: 0.9,
           ease: "power4.out",
           stagger: 0.09,
-          delay: 0.3,
+          // Waits for the intro sheet to clear the top of the viewport.
+          delay: 1.5,
         }
       );
 
