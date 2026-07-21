@@ -18,6 +18,18 @@ const CLIP_EXITED = "inset(0% 0% 0% 100%)";
 const BLEED_Y = "0.07em";
 const BLEED_X = "0.045em";
 
+// Horizontal slide-in distance for the entrance, in px.
+const ENTRANCE_X = 35;
+
+// Entrance mask for each line, applied as a clip-path so it never affects
+// layout: tight at the bottom (chars rise out of it), generous everywhere
+// else so nothing is chopped mid-flight — top covers the hover hop and the
+// italic serif's ascenders (the "i" dot), left covers the x slide-in, right
+// covers hover rotation. clip-path instead of overflow because Safari keeps
+// stale layer clips on transform-animated chars when an ancestor's overflow
+// is toggled, leaving glyphs sliced long after the mask is gone.
+const LINE_MASK = `inset(-0.35em -0.15em 0 -${ENTRANCE_X}px)`;
+
 // Minimum time between hover-triggered sweeps on the same word, so
 // waving the cursor around doesn't spam the effect. Keep this short:
 // anything much longer makes deliberate re-hovers feel broken.
@@ -43,16 +55,24 @@ export default function Reveal({
     (_, contextSafe) => {
       if (window.matchMedia("(prefers-reduced-motion: reduce)").matches) {
         gsap.set(".reveal-char", { clearProps: "transform" });
+        gsap.set(".reveal-line", { clipPath: "none" });
         return;
       }
 
       const cleanups: (() => void)[] = [];
 
-      const enableHighlight = () => {
-        // The selection block bleeds past the line box, so drop the
-        // reveal mask once the entrance animation is done.
-        gsap.set(".reveal-line", { overflow: "visible" });
+      // The mask has done its job once the letters have landed, and the
+      // sweep-overlay selection block bleeds past even LINE_MASK's bottom
+      // edge — so remove it entirely, and demote the chars: clearing the
+      // landed transforms and will-change drops their composited layers, so
+      // no stale layer clip can outlive the mask (Safari especially).
+      const dropMask = () => {
+        gsap.set(".reveal-line", { clipPath: "none" });
+        gsap.set(".reveal-char", { clearProps: "transform" });
+        gsap.set(".reveal-char", { willChange: "auto" });
+      };
 
+      const enableHighlight = () => {
         const overlays = gsap.utils.toArray<HTMLElement>(
           ".sweep-overlay",
           scope.current
@@ -187,7 +207,7 @@ export default function Reveal({
       // would otherwise parse as a lingering pixel offset.
       gsap.fromTo(
         ".reveal-char",
-        { yPercent: 115, y: 0, x: -35 },
+        { yPercent: 115, y: 0, x: -ENTRANCE_X },
         {
           yPercent: 0,
           y: 0,
@@ -202,6 +222,7 @@ export default function Reveal({
             once: true,
           },
           onComplete: () => {
+            dropMask();
             if (highlight) enableHighlight();
             enableArtisticHover();
           },
@@ -216,7 +237,11 @@ export default function Reveal({
   return (
     <span ref={scope} className={`block ${className}`}>
       {lines.map((line) => (
-        <span key={line} className="reveal-line block overflow-hidden">
+        <span
+          key={line}
+          className="reveal-line block"
+          style={{ clipPath: LINE_MASK }}
+        >
           {line.split(" ").map((word, wi, words) => (
             <Fragment key={wi}>
               <span

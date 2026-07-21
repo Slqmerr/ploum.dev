@@ -1,5 +1,4 @@
 import AboutBand from "./components/AboutBand";
-import ArrowButton from "./components/ArrowButton";
 import CurtainFooter from "./components/CurtainFooter";
 import Marquee from "./components/Marquee";
 import WorkShowcase from "./components/WorkShowcase";
@@ -29,28 +28,40 @@ export default function Home() {
         <section className="mt-8 flex flex-col gap-6 md:mt-10 md:flex-row md:items-end md:gap-8">
           <h1 className="text-[clamp(3.4rem,9.6vw,12rem)] leading-[0.85] font-black tracking-[-0.04em] uppercase select-none">
             <Reveal
-              lines={["Stay Creative"]}
+              lines={["Meet Ploum"]}
               delay={1.6}
               highlight
-              artisticWords={["Creative"]}
+              artisticWords={["Ploum"]}
             />
           </h1>
           <SocialLinks className="md:ml-auto md:items-end md:pb-2" />
         </section>
 
+        {/* Subtitle + bio on the left, hover spots aligned to the same top */}
+        <section className="mt-4 grid grid-cols-12 items-start gap-4 md:mt-6">
+          <div className="col-span-12 md:col-span-6 md:col-start-1">
+            {/* Hero subtitle */}
+            <p className="text-[0.65rem] font-bold tracking-[0.2em] uppercase md:text-xs">
+              Web Design &amp; Development
+            </p>
+
+            {/* Bio blurb — template copy, replace with real bio */}
+            <p className="mt-4 max-w-xl text-xs leading-relaxed font-medium md:text-sm">
+              I build fast, expressive interfaces where design and engineering
+              meet. Fluent in React, Next.js, and motion design — and endlessly
+              curious about typography, interaction, and the small details that
+              make the web feel alive.
+            </p>
+          </div>
+
+          {/* Invisible hover spots on the right, top-aligned with the text */}
+          <HoverSpots className="hidden md:col-span-5 md:col-start-8 md:row-start-1 md:grid md:aspect-[16/9] lg:col-span-6 lg:col-start-7" />
+        </section>
+
         {/* Middle section — asymmetrical */}
         <section className="mt-10 grid grid-cols-12 items-end gap-4 md:mt-16">
-          <figure className="relative col-span-12 aspect-[3/2] border-2 border-black bg-[#e2d9cf] sm:col-span-10 md:col-span-7 md:aspect-[16/9] lg:col-span-6">
-            <span className="absolute top-4 left-4 text-[0.6rem] font-bold tracking-[0.35em] uppercase">
-              Portrait — 01
-            </span>
-            <ArrowButton targetId="about" className="absolute bottom-4 left-4" />
-          </figure>
-
-          {/* Invisible hover spots filling the empty right space */}
-          <HoverSpots className="hidden md:col-span-5 md:col-start-8 md:row-start-1 md:grid md:self-stretch md:pb-14 lg:col-span-6 lg:col-start-7" />
-
-          <div className="col-span-12 self-end sm:col-span-6 md:col-span-3 md:col-start-8 md:row-start-1 lg:col-start-7">
+          {/* Pizza caption on the left */}
+          <div className="col-span-12 self-end sm:col-span-6 md:col-span-3 md:col-start-1">
             <PizzaEasterEgg />
           </div>
         </section>

@@ -7,13 +7,28 @@ import { useGSAP } from "@gsap/react";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
-// Placeholder projects — swap in real work as it ships.
-const PROJECTS = [
-  { index: "01", title: "Project", role: "Design & build" },
-  { index: "02", title: "Project", role: "Front end" },
-  { index: "03", title: "Project", role: "Animation" },
-  { index: "04", title: "Project", role: "Design & build" },
-  { index: "05", title: "Project", role: "Front end" },
+// Services, not projects — honest content for the wall until real work ships.
+const SERVICES = [
+  {
+    index: "01",
+    title: "Web Design",
+    desc: "Brand-driven, grid-based interfaces with a point of view.",
+  },
+  {
+    index: "02",
+    title: "Frontend Development",
+    desc: "Production React, Next.js and TypeScript — clean and fast.",
+  },
+  {
+    index: "03",
+    title: "Motion & Interaction",
+    desc: "GSAP-powered animation and scroll-driven experiences.",
+  },
+  {
+    index: "04",
+    title: "Performance & A11y",
+    desc: "Responsive, accessible, quick on every screen.",
+  },
 ];
 
 export default function WorkShowcase() {
@@ -81,28 +96,47 @@ export default function WorkShowcase() {
     <section ref={scope} id="work" className="-mx-4 mt-14 md:-mx-8 md:mt-20">
       <div className="showcase-pin flex h-svh flex-col justify-center overflow-hidden motion-reduce:overflow-x-auto">
         <div className="flex items-center justify-between px-4 text-[0.65rem] font-bold tracking-[0.2em] uppercase md:px-8 md:text-xs">
-          <p>(02) — Selected work</p>
+          <p>(02) — Services</p>
           <p aria-hidden>Scroll ⟶</p>
         </div>
 
         <div className="showcase-track mt-10 flex w-max items-center gap-6 px-4 will-change-transform md:gap-10 md:px-8">
-          {PROJECTS.map(({ index, title, role }, i) => (
+          {SERVICES.map(({ index, title, desc }, i) => (
             <figure
               key={index}
-              className={`relative aspect-[3/4] w-[72vw] shrink-0 border-2 border-black bg-[#e2d9cf] sm:w-[48vw] md:w-[34vw] lg:w-[28vw] ${
+              className={`group relative flex aspect-[3/4] w-[72vw] shrink-0 flex-col justify-between border-2 border-black bg-[#e2d9cf] p-6 transition-colors duration-300 hover:bg-black hover:text-background sm:w-[48vw] md:w-[34vw] md:p-8 lg:w-[28vw] ${
                 i % 2 === 0
                   ? "-translate-y-4 md:-translate-y-8"
                   : "translate-y-4 md:translate-y-8"
               }`}
             >
-              <span className="absolute top-4 left-4 text-[0.6rem] font-bold tracking-[0.35em] uppercase">
-                {title} — {index}
+              <span className="text-[0.6rem] font-bold tracking-[0.35em] uppercase">
+                ({index})
               </span>
-              <span className="absolute bottom-4 left-4 text-[0.6rem] font-bold tracking-[0.25em] uppercase">
-                {role}
-              </span>
+              <div>
+                <h3 className="text-[clamp(1.6rem,2.4vw,2.6rem)] leading-[0.95] font-black tracking-[-0.02em] uppercase">
+                  {title}
+                </h3>
+                <p className="mt-3 max-w-[24ch] text-xs leading-relaxed font-medium tracking-wide">
+                  {desc}
+                </p>
+              </div>
             </figure>
           ))}
+
+          {/* Closing CTA panel — inverted, links to contact */}
+          <a
+            href="#contact"
+            className="group flex aspect-[3/4] w-[72vw] shrink-0 translate-y-4 flex-col justify-between border-2 border-black bg-black p-6 text-background transition-colors duration-300 hover:bg-background hover:text-black sm:w-[48vw] md:w-[34vw] md:translate-y-8 md:p-8 lg:w-[28vw]">
+            <span className="text-[0.6rem] font-bold tracking-[0.35em] uppercase">
+              (05)
+            </span>
+            <h3 className="text-[clamp(1.6rem,2.4vw,2.6rem)] leading-[0.95] font-black tracking-[-0.02em] uppercase">
+              Let&apos;s build
+              <br />
+              something →
+            </h3>
+          </a>
         </div>
       </div>
     </section>

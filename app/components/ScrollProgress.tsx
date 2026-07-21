@@ -54,16 +54,19 @@ export default function ScrollProgress() {
     // sweeps over it at the end of the page. Bottom-anchored to stay clear
     // of the hero's social links; tabular-nums keeps the vertical label a
     // constant length so counter ticks can't reflow the column.
+    // mix-blend-difference (white base) matches the header/cursor: near-black
+    // over the cream page, flipping white over the black about band —
+    // requires no stacking context between here and main (see page.tsx).
     <div
       ref={scope}
       aria-hidden
-      className="fixed right-3 bottom-6 z-20 hidden flex-col items-center gap-3 select-none md:flex"
+      className="fixed right-3 bottom-6 z-20 hidden flex-col items-center gap-3 text-white mix-blend-difference select-none md:flex"
     >
       <span className="text-[0.6rem] font-bold tracking-[0.35em] uppercase tabular-nums [writing-mode:vertical-rl]">
         Scroll — <span className="progress-count">000</span>%
       </span>
-      <span className="block h-[30vh] w-0.5 bg-black/20">
-        <span className="progress-fill block h-full w-full origin-top scale-y-0 bg-black will-change-transform" />
+      <span className="block h-[30vh] w-0.5 bg-white/20">
+        <span className="progress-fill block h-full w-full origin-top scale-y-0 bg-white will-change-transform" />
       </span>
     </div>
   );
