@@ -77,7 +77,7 @@ export default function WorkShowcase() {
       <div className="showcase-pin flex h-svh flex-col justify-center overflow-hidden motion-reduce:overflow-x-auto">
         <div className="flex items-center justify-between px-4 text-[0.65rem] font-bold tracking-[0.2em] uppercase md:px-8 md:text-xs">
           <p>(02) — What I do</p>
-          <p aria-hidden>Scroll ⟶</p>
+         
         </div>
 
         <div className="showcase-track mt-6 flex w-max items-center gap-[8vw] px-4 will-change-transform md:mt-10 md:gap-[10vw] md:px-8">

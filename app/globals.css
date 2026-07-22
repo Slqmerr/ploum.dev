@@ -12,8 +12,24 @@
   --font-artistic: var(--font-playfair);
 }
 
-html {
+/* Lenis owns smoothing when active (it adds .lenis / .lenis-smooth on
+   <html>); native smooth stays only as the reduced-motion / no-JS fallback,
+   where Lenis is intentionally disabled. */
+html:not(.lenis) {
   scroll-behavior: smooth;
+}
+
+html.lenis,
+html.lenis body {
+  height: auto;
+}
+
+.lenis.lenis-smooth {
+  scroll-behavior: auto !important;
+}
+
+.lenis.lenis-stopped {
+  overflow: hidden;
 }
 
 body {
@@ -78,8 +94,22 @@ html.custom-cursor * {
   }
 }
 
+/* Blinking clock colon: hard on/off toggle, no fade */
+.clock-colon {
+  animation: clock-blink 1.4s steps(1) infinite;
+}
+
+@keyframes clock-blink {
+  50% {
+    opacity: 0;
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .liquid-text {
+    animation: none;
+  }
+  .clock-colon {
     animation: none;
   }
 }
