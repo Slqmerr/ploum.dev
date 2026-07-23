@@ -68,6 +68,31 @@ export default function WorkShowcase() {
           },
         },
       });
+
+      // Bracket spread: the parens start overlapped over the (hidden) number
+      // and part outward to reveal it as the section scrolls in. Transform +
+      // opacity only, so the label never reflows; scrubbed so it reverses.
+      const open = scope.current!.querySelector<HTMLElement>(".bracket-open");
+      const close = scope.current!.querySelector<HTMLElement>(".bracket-close");
+      const num = scope.current!.querySelector<HTMLElement>(".bracket-num");
+      if (open && close && num) {
+        const half = num.offsetWidth / 2;
+        gsap.set(open, { x: half });
+        gsap.set(close, { x: -half });
+        gsap.set(num, { opacity: 0 });
+        gsap
+          .timeline({
+            defaults: { ease: "none" },
+            scrollTrigger: {
+              trigger: scope.current,
+              start: "top 90%",
+              end: "top 60%",
+              scrub: 1,
+            },
+          })
+          .to([open, close], { x: 0 })
+          .to(num, { opacity: 1 }, 0.4);
+      }
     },
     { scope }
   );
@@ -76,8 +101,11 @@ export default function WorkShowcase() {
     <section ref={scope} id="work" className="-mx-4 mt-14 md:-mx-8 md:mt-20">
       <div className="showcase-pin flex h-svh flex-col justify-center overflow-hidden motion-reduce:overflow-x-auto">
         <div className="flex items-center justify-between px-4 text-[0.65rem] font-bold tracking-[0.2em] uppercase md:px-8 md:text-xs">
-          <p>(02) — What I do</p>
-         
+          <p>
+            <span className="bracket-open inline-block">(</span>
+            <span className="bracket-num inline-block">02</span>
+            <span className="bracket-close inline-block">)</span> — What I do
+          </p>
         </div>
 
         <div className="showcase-track mt-6 flex w-max items-center gap-[8vw] px-4 will-change-transform md:mt-10 md:gap-[10vw] md:px-8">

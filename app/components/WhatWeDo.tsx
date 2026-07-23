@@ -19,19 +19,19 @@ const LINES = [
     text: "What",
     dir: -1,
     className:
-      "text-[clamp(4rem,17vw,16rem)] tracking-[-0.03em] uppercase",
+      "text-[clamp(3rem,13vw,12rem)] tracking-[-0.03em] uppercase",
   },
   {
     text: "We",
     dir: 1,
     className:
-      "font-artistic relative z-10 -my-[0.34em] text-[clamp(6rem,23vw,28rem)] italic tracking-[-0.02em] text-white mix-blend-difference",
+      "font-artistic relative z-10 -my-[0.34em] text-[clamp(4.5rem,18vw,21rem)] italic tracking-[-0.02em] text-white mix-blend-difference",
   },
   {
     text: "Do",
     dir: -1,
     className:
-      "text-[clamp(4rem,17vw,16rem)] tracking-[-0.03em] uppercase",
+      "text-[clamp(3rem,13vw,12rem)] tracking-[-0.03em] uppercase",
   },
 ];
 
@@ -75,7 +75,8 @@ export default function WhatWeDo() {
   return (
     <section
       ref={scope}
-      className="flex h-svh flex-col items-center justify-center overflow-hidden"
+      id="what"
+      className="flex h-svh flex-col items-center justify-start overflow-hidden pt-[10vh]"
     >
       <h2 className="wwd-title text-center leading-[0.85] font-black select-none">
         {LINES.map(({ text, dir, className }) => (
