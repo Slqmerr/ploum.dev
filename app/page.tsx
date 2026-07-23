@@ -4,8 +4,6 @@ import HeroTitle from "./components/HeroTitle";
 import ContactMarquee from "./components/ContactMarquee";
 import Manifesto from "./components/Manifesto";
 import WhatWeDo from "./components/WhatWeDo";
-import WorkShowcase from "./components/WorkShowcase";
-import ScrollLine from "./components/ScrollLine";
 import SocialLinks from "./components/SocialLinks";
 import TopHeader from "./components/TopHeader";
 
@@ -22,7 +20,7 @@ export default function Home() {
       {/* Counter-scrolled by CurtainFooter so it holds still under the glass */}
       <div id="page-content" className="relative flex min-h-svh flex-col">
         {/* Scroll-drawn line threading from What We Do down to the manifesto */}
-        <ScrollLine />
+        
 
         {/* First screen — holds the header + hero and fills exactly one
             viewport minus the main's top padding (pt-5 / md:pt-6), so the
@@ -50,7 +48,7 @@ export default function Home() {
         <WhatWeDo />
 
         {/* Pinned horizontal work showcase — vertical scroll pans the wall */}
-        <WorkShowcase />
+      
 
         {/* Manifesto — black band; the scroll-drawn line lands here. Flips the
             difference-blend header white for the whole pass. */}

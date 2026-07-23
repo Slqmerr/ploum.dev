@@ -17,8 +17,8 @@ function Half() {
     <span aria-hidden className="flex shrink-0 items-center">
       {Array.from({ length: REPEAT }).map((_, i) => (
         <span key={i} className="flex shrink-0 items-center">
-          <span>Contact us</span>
-          <span className="px-6 md:px-10">↗</span>
+          <span className="px-6 md:px-10">Contact us</span>
+          
         </span>
       ))}
     </span>

@@ -49,6 +49,14 @@ export default function AboutBand() {
 
       // Scrubbed word-by-word reveal: each word brightens from a faint
       // ghost as the band scrolls through, like a sentence being read.
+      // Trigger on the copy paragraph itself — NOT the whole section, which is
+      // far taller (it also holds the "Got a project?" CTA below). A section-
+      // relative "center 40%" only completed once the section's center reached
+      // mid-screen, i.e. long after the words had scrolled up past the fold, so
+      // the sentence finished brightening too late and needed extra scroll to
+      // read. Ending at the paragraph's own "top 40%" resolves the whole
+      // sentence while it sits framed in the upper-middle of the viewport.
+      const copy = scope.current!.querySelector<HTMLElement>(".about-copy");
       gsap.fromTo(
         ".about-word",
         { opacity: 0.12 },
@@ -58,9 +66,9 @@ export default function AboutBand() {
           ease: "none",
           stagger: 0.15,
           scrollTrigger: {
-            trigger: scope.current,
-            start: "top 78%",
-            end: "center 40%",
+            trigger: copy,
+            start: "top 85%",
+            end: "top 40%",
             scrub: 0.4,
           },
         }
@@ -122,7 +130,7 @@ export default function AboutBand() {
       <p className="text-[0.65rem] font-bold tracking-[0.2em] uppercase md:text-xs">
         (03) — About
       </p>
-      <p className="mt-8 max-w-5xl text-[clamp(1.5rem,3.6vw,3.4rem)] leading-[1.1] font-black tracking-[-0.02em] uppercase">
+      <p className="about-copy mt-8 max-w-5xl text-[clamp(1.5rem,3.6vw,3.4rem)] leading-[1.1] font-black tracking-[-0.02em] uppercase">
         {WORDS.map(({ text, artistic, tag, link }, i) => {
           // Artistic words become the italic serif and reveal the trailing
           // tag box on hover; `cursor-pointer` signals the interaction even
