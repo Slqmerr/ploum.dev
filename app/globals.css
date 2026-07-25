@@ -105,11 +105,28 @@ html.custom-cursor * {
   }
 }
 
+/* GitHub contribution grid: a single calm rise-in, delayed to land just after
+   the hero title settles (HeroTitle's intro runs at delay 1.5s). Static, not
+   scroll-triggered — it lives above the fold. */
+.contrib-rise {
+  animation: contrib-rise 1s cubic-bezier(0.16, 1, 0.3, 1) 1.4s both;
+}
+
+@keyframes contrib-rise {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+
 @media (prefers-reduced-motion: reduce) {
   .liquid-text {
     animation: none;
   }
   .clock-colon {
+    animation: none;
+  }
+  .contrib-rise {
     animation: none;
   }
 }

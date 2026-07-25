@@ -13,10 +13,10 @@ const WORDS = ["Meet", "Ploum"];
 // easing, generous stagger, then it settles and stays still. Letters render
 // visible by default so a JS failure leaves a readable static title.
 //
-// Once the intro settles, "Ploum" becomes hoverable: each letter hops, swaps
-// its brutalist sans for the italic serif at the apex, and lands with a small
-// bounce — cascading left to right. Leaving runs the same cascade back. This
-// mirrors the artistic-word hover used elsewhere on the site (see Reveal).
+// Once the intro settles, "Ploum" swaps typefaces on its own, on a loop: every
+// few seconds each letter hops, swaps its brutalist sans for the italic serif
+// at the apex, and lands with a small bounce — cascading left to right — then
+// after a beat cascades back to the sans. No hover, no pointer; it just cycles.
 export default function HeroTitle({ className = "" }: { className?: string }) {
   const scope = useRef<HTMLHeadingElement>(null);
 
@@ -38,7 +38,7 @@ export default function HeroTitle({ className = "" }: { className?: string }) {
       const tl = gsap.timeline({
         delay: 1.5,
         defaults: { ease: "power2.out" },
-        onComplete: enablePloumHover,
+        onComplete: startPloumCycle,
       });
       tl.to(
         letters,
@@ -58,22 +58,21 @@ export default function HeroTitle({ className = "" }: { className?: string }) {
         0
       );
 
-      function enablePloumHover() {
+      function startPloumCycle() {
         const word = el.querySelector<HTMLElement>(".ploum-word");
         if (!word || !contextSafe) return;
         const chars = word.querySelectorAll<HTMLElement>(".ploum-letter");
-        let hoverTl: gsap.core.Timeline | null = null;
+        let cascadeTl: gsap.core.Timeline | null = null;
 
         // Each letter hops, swaps typeface at the apex, and lands with a small
-        // bounce — cascading left to right. Leaving runs the same cascade back
-        // to the sans. Killing the previous timeline lets a mid-cascade
-        // reversal pick up from wherever each letter is.
+        // bounce — cascading left to right. Killing the previous timeline lets
+        // a mid-cascade reversal pick up from wherever each letter is.
         const cascade = contextSafe((artistic: boolean) => {
-          hoverTl?.kill();
-          hoverTl = gsap.timeline();
+          cascadeTl?.kill();
+          cascadeTl = gsap.timeline();
           chars.forEach((char, i) => {
             const at = i * 0.04;
-            hoverTl!
+            cascadeTl!
               .to(
                 char,
                 {
@@ -99,45 +98,20 @@ export default function HeroTitle({ className = "" }: { className?: string }) {
           });
         });
 
-        // Debounce hover intent: a short dwell must pass, and only the final
-        // enter/leave state runs a cascade. This kills the spam from rapid
-        // in-out swaps. The word span is a stable hit-area — the letters hop
-        // inside it, so its box never slips out from under the cursor.
-        const DWELL_MS = 160;
-        let applied = false;
-        let desired = false;
-        let timer: number | null = null;
+        // Cycle the typeface on its own: hold the serif for a beat, then swap
+        // back to the sans, and repeat. The interval toggles state so each tick
+        // runs the opposite cascade of the last.
+        const HOLD_MS = 2600;
+        let artistic = false;
+        const interval = window.setInterval(() => {
+          artistic = !artistic;
+          cascade(artistic);
+        }, HOLD_MS);
 
-        const settle = () => {
-          timer = null;
-          if (desired !== applied) {
-            applied = desired;
-            cascade(applied);
-          }
-        };
-        const schedule = () => {
-          if (timer === null) timer = window.setTimeout(settle, DWELL_MS);
-        };
-
-        const onEnter = () => {
-          desired = true;
-          schedule();
-        };
-        const onLeave = () => {
-          desired = false;
-          schedule();
-        };
-
-        word.addEventListener("mouseenter", onEnter);
-        word.addEventListener("mouseleave", onLeave);
         cleanups.push(() => {
-          word.removeEventListener("mouseenter", onEnter);
-          word.removeEventListener("mouseleave", onLeave);
-          if (timer !== null) window.clearTimeout(timer);
-          hoverTl?.kill();
+          window.clearInterval(interval);
+          cascadeTl?.kill();
         });
-
-        if (word.matches(":hover")) onEnter();
       }
 
       return () => cleanups.forEach((fn) => fn());
@@ -153,9 +127,7 @@ export default function HeroTitle({ className = "" }: { className?: string }) {
           <span
             key={wi}
             className={
-              isPloum
-                ? "ploum-word inline-block cursor-pointer motion-reduce:hover:font-artistic motion-reduce:hover:italic motion-reduce:hover:normal-case"
-                : "inline-block"
+              isPloum ? "ploum-word inline-block" : "inline-block"
             }
           >
             {[...word].map((char, ci) => (

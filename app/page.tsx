@@ -1,5 +1,6 @@
 import AboutBand from "./components/AboutBand";
 import CurtainFooter from "./components/CurtainFooter";
+import GithubContributions from "./components/GithubContributions";
 import HeroTitle from "./components/HeroTitle";
 import ContactMarquee from "./components/ContactMarquee";
 import Manifesto from "./components/Manifesto";
@@ -30,16 +31,18 @@ export default function Home() {
           {/* Top header — strict four-column grid */}
           <TopHeader />
 
-          {/* Primary hero — grows to fill the first screen so the heading
-              lands dead center, both horizontally and vertically. Social
-              links stay pinned to the right edge. */}
-          <section id="hero" className="relative flex flex-1 flex-col items-center justify-center py-8">
+          {/* Primary hero — grows to fill the first screen so the heading +
+              contribution graph land as one centered group, both horizontally
+              and vertically, always within a single viewport (no scroll to
+              reveal the graph). Social links stay pinned to the right edge. */}
+          <section id="hero" className="relative flex flex-1 flex-col items-center justify-center gap-8 py-8 md:gap-12">
           <HeroTitle className="text-center text-[clamp(3.4rem,9.6vw,12rem)] leading-[0.85] font-black tracking-[-0.04em] uppercase select-none" />
+          {/* A year of GitHub activity as a quiet monochrome pulse under the
+              title. Async server component; renders nothing if the fetch
+              fails. */}
+          <GithubContributions />
           <SocialLinks className="absolute top-1/2 right-0 -translate-y-1/2 items-end" />
         </section>
-
-          {/* Middle section — asymmetrical */}
-          <section className="mt-10 grid grid-cols-12 items-end gap-4 md:mt-16"></section>
         </div>
 
         <AboutBand />
