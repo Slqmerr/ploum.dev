@@ -151,6 +151,9 @@ export default function Reveal({
         words.forEach((word) => {
           if (!contextSafe) return;
           const chars = word.querySelectorAll<HTMLElement>(".reveal-char");
+          // Listen on the non-moving hit-area, not the animating word.
+          const hit =
+            word.querySelector<HTMLElement>(".artistic-hit") ?? word;
           let tl: gsap.core.Timeline | null = null;
 
           // Each letter hops, swaps typeface at the apex, and lands with a
@@ -188,18 +191,45 @@ export default function Reveal({
             });
           });
 
-          const onEnter = () => cascade(true);
-          const onLeave = () => cascade(false);
+          // Debounce hover intent: a short dwell must pass, and only the
+          // final enter/leave state runs a cascade. This kills the spam when
+          // a letter's hop momentarily slips out from under the cursor
+          // (enter/leave oscillation) and the jitter of rapid in-out swaps.
+          const DWELL_MS = 160;
+          let applied = false;
+          let desired = false;
+          let timer: number | null = null;
 
-          word.addEventListener("mouseenter", onEnter);
-          word.addEventListener("mouseleave", onLeave);
+          const settle = () => {
+            timer = null;
+            if (desired !== applied) {
+              applied = desired;
+              cascade(applied);
+            }
+          };
+          const schedule = () => {
+            if (timer === null) timer = window.setTimeout(settle, DWELL_MS);
+          };
+
+          const onEnter = () => {
+            desired = true;
+            schedule();
+          };
+          const onLeave = () => {
+            desired = false;
+            schedule();
+          };
+
+          hit.addEventListener("mouseenter", onEnter);
+          hit.addEventListener("mouseleave", onLeave);
           cleanups.push(() => {
-            word.removeEventListener("mouseenter", onEnter);
-            word.removeEventListener("mouseleave", onLeave);
+            hit.removeEventListener("mouseenter", onEnter);
+            hit.removeEventListener("mouseleave", onLeave);
+            if (timer !== null) window.clearTimeout(timer);
             tl?.kill();
           });
 
-          if (word.matches(":hover")) onEnter();
+          if (hit.matches(":hover")) onEnter();
         });
       };
 
@@ -284,6 +314,16 @@ export default function Reveal({
                       </span>
                     ))}
                   </span>
+                )}
+                {/* Stable hover hit-area: the letters hop underneath it, so
+                    what's under the cursor never moves — no enter/leave
+                    oscillation at the edges. */}
+                {artisticWords.includes(word) && (
+                  <span
+                    aria-hidden
+                    className="artistic-hit absolute z-10"
+                    style={{ inset: `-${BLEED_Y} -${BLEED_X}` }}
+                  />
                 )}
               </span>
               {wi < words.length - 1 && " "}

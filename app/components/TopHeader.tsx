@@ -4,13 +4,17 @@ import { useRef } from "react";
 import gsap from "gsap";
 import { useGSAP } from "@gsap/react";
 import { ScrambleTextPlugin } from "gsap/ScrambleTextPlugin";
+import LocalClock from "./LocalClock";
 
 gsap.registerPlugin(useGSAP, ScrambleTextPlugin);
 
+// Section links point at the home route so they work from any page;
+// SmoothScroll intercepts them for a smooth in-page scroll when already home.
 const NAV_LINKS = [
-  { href: "#work", label: "Work" },
-  { href: "#about", label: "About" },
-  { href: "#contact", label: "Contact" },
+  { href: "/#work", label: "Work" },
+  { href: "/services", label: "Services" },
+  { href: "/about", label: "About" },
+  { href: "/#contact", label: "Contact" },
 ];
 
 export default function TopHeader() {
@@ -37,6 +41,11 @@ export default function TopHeader() {
           delay: 1.5,
         }
       );
+
+      // The header is fixed to the viewport and stays visible the whole way
+      // down — no scroll-driven hide. It reveals once on load (above) and then
+      // just floats there, inverting against whatever scrolls beneath it via
+      // mix-blend-difference.
 
       // Hover scrambles: the label flickers through random uppercase glyphs
       // and resolves back to itself. Only one tween per link is ever alive —
@@ -71,28 +80,39 @@ export default function TopHeader() {
   );
 
   return (
-    // Sticks in place while the page scrolls; z-40 keeps it painting above
-    // the curtain footer (z-30) so the nav floats on the glass at the end.
-    // mix-blend-difference + white text inverts against whatever scrolls
-    // beneath: near-black over the cream page, flipping to white where the
-    // dark hero type passes under. Requires no stacking context between here
-    // and the root (see main in page.tsx).
+    // Fixed to the viewport (left/right insets mirror main's px-4/md:px-8,
+    // which it no longer inherits now that it's out of flow); z-40 keeps it
+    // painting above the curtain footer (z-30) so the nav floats on the glass
+    // at the end. mix-blend-difference + white text inverts against whatever
+    // scrolls beneath: near-black over the cream page, flipping to white where
+    // the dark hero type passes under. Requires no stacking context between
+    // here and the root — #page-content is position:relative with no z-index,
+    // so it establishes none and never traps this fixed element (see main in
+    // page.tsx).
     <header
       ref={scope}
-      className="sticky top-5 z-40 grid grid-cols-2 gap-x-6 gap-y-3 text-[0.65rem] leading-tight font-bold tracking-[0.15em] text-white uppercase mix-blend-difference md:top-6 md:grid-cols-4 md:text-xs"
+      className="fixed top-5 right-4 left-4 z-40 grid grid-cols-2 gap-x-6 gap-y-3 text-[0.65rem] leading-tight font-bold tracking-[0.15em] text-white uppercase mix-blend-difference md:top-6 md:right-8 md:left-8 md:grid-cols-4 md:text-xs"
     >
-      {["Ploum", "Currently front end engineer", "Based in Larissa, Greece"].map(
-        (text) => (
-          <p key={text} className="overflow-hidden">
-            <span
-              className="header-item block will-change-transform"
-              style={{ transform: "translateY(115%)" }}
-            >
-              <span className="liquid-text">{text}</span>
-            </span>
-          </p>
-        )
-      )}
+      {["Ploum", "Currently front end engineer"].map((text) => (
+        <p key={text} className="overflow-hidden">
+          <span
+            className="header-item block will-change-transform"
+            style={{ transform: "translateY(115%)" }}
+          >
+            <span className="liquid-text">{text}</span>
+          </span>
+        </p>
+      ))}
+
+      {/* Live local clock replaces the static location line */}
+      <p className="overflow-hidden">
+        <span
+          className="header-item block will-change-transform"
+          style={{ transform: "translateY(115%)" }}
+        >
+          <LocalClock />
+        </span>
+      </p>
 
       <nav aria-label="Main" className="flex gap-x-4">
         {NAV_LINKS.map(({ href, label }) => (

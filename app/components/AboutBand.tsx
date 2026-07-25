@@ -4,6 +4,7 @@ import { Fragment, useRef } from "react";
 import gsap from "gsap";
 import { ScrollTrigger } from "gsap/ScrollTrigger";
 import { useGSAP } from "@gsap/react";
+import ContactCTA from "./ContactCTA";
 
 gsap.registerPlugin(useGSAP, ScrollTrigger);
 
@@ -21,20 +22,20 @@ const WORDS: {
   { text: "design" },
   { text: "and" },
   { text: "build" },
-  { text: "playful,", artistic: true, tag: "bouncy ↗" },
+  { text: "playful,", artistic: true, tag: "See services ↗", link: "/services" },
   { text: "precise" },
   { text: "interfaces" },
   { text: "—" },
   { text: "brutalist" },
   { text: "grids," },
-  { text: "fluid", artistic: true, tag: "in motion ↗" },
+  { text: "fluid", artistic: true, tag: "See services ↗", link: "/services" },
   { text: "motion," },
   { text: "and" },
   { text: "type" },
   { text: "that" },
   { text: "misbehaves" },
   { text: "just" },
-  { text: "enough.", artistic: true, tag: "See more →", link: "/about" },
+  { text: "enough.", artistic: true, tag: "About me →", link: "/about" },
 ];
 
 export default function AboutBand() {
@@ -48,6 +49,14 @@ export default function AboutBand() {
 
       // Scrubbed word-by-word reveal: each word brightens from a faint
       // ghost as the band scrolls through, like a sentence being read.
+      // Trigger on the copy paragraph itself — NOT the whole section, which is
+      // far taller (it also holds the "Got a project?" CTA below). A section-
+      // relative "center 40%" only completed once the section's center reached
+      // mid-screen, i.e. long after the words had scrolled up past the fold, so
+      // the sentence finished brightening too late and needed extra scroll to
+      // read. Ending at the paragraph's own "top 40%" resolves the whole
+      // sentence while it sits framed in the upper-middle of the viewport.
+      const copy = scope.current!.querySelector<HTMLElement>(".about-copy");
       gsap.fromTo(
         ".about-word",
         { opacity: 0.12 },
@@ -57,9 +66,9 @@ export default function AboutBand() {
           ease: "none",
           stagger: 0.15,
           scrollTrigger: {
-            trigger: scope.current,
-            start: "top 78%",
-            end: "center 40%",
+            trigger: copy,
+            start: "top 85%",
+            end: "top 40%",
             scrub: 0.4,
           },
         }
@@ -116,12 +125,12 @@ export default function AboutBand() {
     <section
       ref={scope}
       id="about"
-      className="-mx-4 mt-14 bg-black px-4 py-20 text-background md:-mx-8 md:mt-20 md:px-8 md:py-28"
+      className="-mx-4 mt-14 bg-black px-4 pt-20 pb-28 text-background md:-mx-8 md:mt-20 md:px-8 md:pt-28 md:pb-40"
     >
       <p className="text-[0.65rem] font-bold tracking-[0.2em] uppercase md:text-xs">
         (03) — About
       </p>
-      <p className="mt-8 max-w-5xl text-[clamp(1.5rem,3.6vw,3.4rem)] leading-[1.1] font-black tracking-[-0.02em] uppercase">
+      <p className="about-copy mt-8 max-w-5xl text-[clamp(1.5rem,3.6vw,3.4rem)] leading-[1.1] font-black tracking-[-0.02em] uppercase">
         {WORDS.map(({ text, artistic, tag, link }, i) => {
           // Artistic words become the italic serif and reveal the trailing
           // tag box on hover; `cursor-pointer` signals the interaction even
@@ -149,6 +158,14 @@ export default function AboutBand() {
           );
         })}
       </p>
+
+      {/* CTA — centred title + link to the contact curtain */}
+      <div className="mt-28 flex flex-col items-center text-center md:mt-44">
+        <h2 className="text-[clamp(2.6rem,10vw,9rem)] leading-[0.9] font-black tracking-[-0.03em] uppercase">
+          Got a project?
+        </h2>
+        <ContactCTA />
+      </div>
 
       {/* Cursor-following tag, shown only while the linked word is hovered.
           Fixed + GSAP-driven x/y, starts hidden via autoAlpha. */}
