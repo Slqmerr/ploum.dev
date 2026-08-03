@@ -55,7 +55,7 @@ const CAPABILITIES = [
   },
   {
     n: "03",
-    label: "Design",
+    label: "Brand Design",
     desc: "Type, timing & detail — accessible by default.",
   },
 ];
@@ -142,15 +142,17 @@ export default function WhatWeDo() {
               href="/services"
               className="flex flex-col gap-1 py-5 md:flex-row md:items-baseline md:justify-between md:gap-8"
             >
-              <span className="flex items-baseline gap-3 md:gap-5">
+              <span className="flex items-baseline gap-3 md:shrink-0 md:gap-5">
                 <span className="font-mono text-[0.7rem] tabular-nums text-black/40">
                   {n}
                 </span>
-                <span className="text-3xl leading-none font-black tracking-[-0.02em] uppercase md:text-5xl">
+                {/* nowrap so two-word labels ("Brand Design") stay on the
+                    baseline instead of stacking when the row gets tight. */}
+                <span className="text-3xl leading-none font-black tracking-[-0.02em] whitespace-nowrap uppercase md:text-5xl">
                   {label}
                 </span>
               </span>
-              <span className="flex items-center gap-2 text-sm text-black/55 md:shrink-0 md:opacity-0 md:transition-opacity md:duration-500 md:group-hover:opacity-100">
+              <span className="flex items-center gap-2 text-sm text-black/55 md:min-w-0 md:text-right md:opacity-0 md:transition-opacity md:duration-500 md:group-hover:opacity-100">
                 {desc}
                 <span className="transition-transform duration-500 group-hover:translate-x-1">
                   ↗
