@@ -6,7 +6,6 @@ import ContactMarquee from "./components/ContactMarquee";
 import Manifesto from "./components/Manifesto";
 import WhatWeDo from "./components/WhatWeDo";
 import SocialLinks from "./components/SocialLinks";
-import StackWindow from "./components/StackWindow";
 import StoryLine from "./components/StoryLine";
 import TopHeader from "./components/TopHeader";
 
@@ -54,7 +53,11 @@ export default function Home() {
 
         {/* Giant section title — lines slide in from alternating sides */}
         <WhatWeDo />
-
+      <section className="mt-14 flex flex-1 flex-col justify-end pb-[28vh] md:pb-[36vh]">
+         
+          <ContactMarquee />
+          {/* Studio plate under the marquee — cycling captions */}
+        </section>
         
 
         {/* Pinned horizontal work showcase — vertical scroll pans the wall */}
@@ -69,16 +72,7 @@ export default function Home() {
             black palette on hover. Grows to fill the last of the flex column;
             pb keeps room below it before the curtain footer (triggered at
             #page-content's bottom) reveals. */}
-        <section className="mt-14 flex flex-1 flex-col justify-end pb-[28vh] md:pb-[36vh]">
-         
-          <ContactMarquee />
-          {/* Studio plate under the marquee — cycling captions */}
-          
-          {/* The stack, as a macOS editor window that types "hello world" once
-            per tool — the concrete answer to the disciplines listed above */}
-        <StackWindow />
-
-        </section>
+        
       </div>
 
 
