@@ -1,4 +1,5 @@
 import CurtainFooter from "../components/CurtainFooter";
+import StackWindow from "../components/StackWindow";
 import TopHeader from "../components/TopHeader";
 
 export const metadata = {
@@ -58,6 +59,10 @@ export default function About() {
             </dl>
           </div>
         </section>
+
+        {/* The stack, as a macOS editor window that types "hello world" once
+            per tool — the concrete companion to the Stack line above */}
+        <StackWindow />
 
         {/* Room for more about content later */}
         <div className="pb-[20vh] md:pb-[28vh]" />

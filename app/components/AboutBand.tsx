@@ -38,6 +38,9 @@ const WORDS: {
   { text: "enough.", artistic: true, tag: "About me →", link: "/about" },
 ];
 
+// CTA headline, split so it can ride the same word-by-word scrub as the copy.
+const CTA_WORDS = ["Got", "a", "project?"];
+
 export default function AboutBand() {
   const scope = useRef<HTMLElement>(null);
 
@@ -48,31 +51,36 @@ export default function AboutBand() {
       }
 
       // Scrubbed word-by-word reveal: each word brightens from a faint
-      // ghost as the band scrolls through, like a sentence being read.
-      // Trigger on the copy paragraph itself — NOT the whole section, which is
-      // far taller (it also holds the "Got a project?" CTA below). A section-
-      // relative "center 40%" only completed once the section's center reached
-      // mid-screen, i.e. long after the words had scrolled up past the fold, so
-      // the sentence finished brightening too late and needed extra scroll to
-      // read. Ending at the paragraph's own "top 40%" resolves the whole
-      // sentence while it sits framed in the upper-middle of the viewport.
-      const copy = scope.current!.querySelector<HTMLElement>(".about-copy");
-      gsap.fromTo(
-        ".about-word",
-        { opacity: 0.12 },
-        {
-          opacity: 1,
-          duration: 0.6,
-          ease: "none",
-          stagger: 0.15,
-          scrollTrigger: {
-            trigger: copy,
-            start: "top 85%",
-            end: "top 40%",
-            scrub: 0.4,
-          },
-        }
-      );
+      // ghost as its block scrolls through, like a sentence being read.
+      // Trigger on the text block itself — NOT the whole section, which is
+      // far taller (it holds both the copy and the "Got a project?" CTA). A
+      // section-relative "center 40%" only completed once the section's centre
+      // reached mid-screen, i.e. long after the words had scrolled up past the
+      // fold, so the sentence finished brightening too late and needed extra
+      // scroll to read. Ending at each block's own "top 40%" resolves it while
+      // it sits framed in the upper-middle of the viewport.
+      const revealWords = (blockSelector: string, wordSelector: string) => {
+        const block = scope.current!.querySelector<HTMLElement>(blockSelector);
+        gsap.fromTo(
+          wordSelector,
+          { opacity: 0.12 },
+          {
+            opacity: 1,
+            duration: 0.6,
+            ease: "none",
+            stagger: 0.15,
+            scrollTrigger: {
+              trigger: block,
+              start: "top 85%",
+              end: "top 40%",
+              scrub: 0.4,
+            },
+          }
+        );
+      };
+
+      revealWords(".about-copy", ".about-word");
+      revealWords(".about-cta-title", ".about-cta-word");
 
       // Cursor-following tag box: while any artistic word is hovered, the
       // box trails the pointer with a soft lag, offset up-right so it never
@@ -161,8 +169,13 @@ export default function AboutBand() {
 
       {/* CTA — centred title + link to the contact curtain */}
       <div className="mt-28 flex flex-col items-center text-center md:mt-44">
-        <h2 className="text-[clamp(2.6rem,10vw,9rem)] leading-[0.9] font-black tracking-[-0.03em] uppercase">
-          Got a project?
+        <h2 className="about-cta-title text-[clamp(2.6rem,10vw,9rem)] leading-[0.9] font-black tracking-[-0.03em] uppercase">
+          {CTA_WORDS.map((word, i) => (
+            <Fragment key={i}>
+              <span className="about-cta-word inline-block">{word}</span>
+              {i < CTA_WORDS.length - 1 && " "}
+            </Fragment>
+          ))}
         </h2>
         <ContactCTA />
       </div>

@@ -28,31 +28,28 @@ function chars(text: string) {
 
 // Seconds each label holds before the next swap.
 const HOLD = 2.2;
-// How far the brackets squeeze inward on each swap, in px.
+// How far the arrows jab inward on each swap, in px.
 const NUDGE = 10;
+// How far the arrows spread outward while the CTA is hovered, in px.
+const HOVER_SPREAD = 22;
 
-// A framing bracket with chamfered (cut) corners. `flip` uses the mirrored
-// path (not a CSS transform) so GSAP is free to drive x/y/rotation on the svg
+// A chevron arrow pointing inward at the label. `flip` uses the mirrored path
+// (not a CSS transform) so GSAP is free to drive x/y/rotation on the svg
 // without clobbering the flip. Stroke inherits the CTA color via currentColor.
-function Bracket({ flip = false }: { flip?: boolean }) {
+// The 44x60 box puts both arms at ~45°, so it reads as an arrowhead rather
+// than the steep near-vertical wedge a text-height box would force.
+function Arrow({ flip = false }: { flip?: boolean }) {
   return (
     <svg
       aria-hidden
-      viewBox="0 0 36 100"
+      viewBox="0 0 44 60"
       fill="none"
       stroke="currentColor"
       strokeWidth={6}
       strokeLinejoin="miter"
-      className="cta-bracket h-[clamp(2rem,7vw,5.5rem)] w-auto shrink-0 will-change-transform"
+      className="cta-arrow h-[clamp(1.5rem,5vw,3.75rem)] w-auto shrink-0 will-change-transform"
     >
-      {/* arms point inward toward the text; both elbows sliced at 45° */}
-      <path
-        d={
-          flip
-            ? "M2 7 L21 7 L28 14 L28 86 L21 93 L2 93"
-            : "M34 7 L15 7 L8 14 L8 86 L15 93 L34 93"
-        }
-      />
+      <path d={flip ? "M32 6 L8 30 L32 54" : "M12 6 L36 30 L12 54"} />
     </svg>
   );
 }
@@ -64,7 +61,7 @@ export default function ContactCTA() {
     () => {
       const rest = gsap.utils.toArray<HTMLElement>(".cta-rest .cta-char", scope.current);
       const hover = gsap.utils.toArray<HTMLElement>(".cta-hover .cta-char", scope.current);
-      const brackets = gsap.utils.toArray<HTMLElement>(".cta-bracket", scope.current);
+      const arrows = gsap.utils.toArray<HTMLElement>(".cta-arrow", scope.current);
 
       // Resting state: the hover label parked just below the clip.
       gsap.set(hover, { yPercent: 110 });
@@ -73,10 +70,10 @@ export default function ContactCTA() {
         return; // hold on the resting label, no cycling
       }
 
-      // Idle: the brackets breathe continuously — left and right drift in
-      // opposite phase with a slight tilt, so the frame is always alive. Uses
-      // y/rotation only, leaving x free for the swap squeeze below.
-      gsap.to(brackets, {
+      // Idle: the arrows breathe continuously — left and right drift in
+      // opposite phase with a slight tilt, so the pair is always alive. Uses
+      // y/rotation only, leaving x free for the swap jab below.
+      gsap.to(arrows, {
         y: (i) => (i === 0 ? -8 : 8),
         rotation: (i) => (i === 0 ? -2.5 : 2.5),
         duration: 1.9,
@@ -85,10 +82,10 @@ export default function ContactCTA() {
         repeat: -1,
       });
 
-      // Squeeze the brackets inward, then release — left moves right, right
-      // moves left. Called at each label swap so the frame reacts to it.
+      // Jab the arrows inward, then release — left moves right, right moves
+      // left. Called at each label swap so the pair reacts to it.
       const squeeze = () =>
-        gsap.to(brackets, {
+        gsap.to(arrows, {
           x: (i) => (i === 0 ? NUDGE : -NUDGE),
           duration: 0.28,
           ease: "power2.inOut",
@@ -109,6 +106,31 @@ export default function ContactCTA() {
         .to(rest, { yPercent: 0, stagger: 0.03 }, ">")
         .to(hover, { yPercent: 110, stagger: 0.03 }, "<")
         .add(squeeze, "<");
+
+      // Hover: the arrows throw themselves open — spreading outward and
+      // scaling up — so the whole CTA reads as one big target opening up to
+      // the pointer. Overshoots on the way out via `back`, settles on the way
+      // back. Driven on the wrappers, so the idle breathe underneath keeps
+      // running and the swap jab still lands normally mid-hover.
+      const wraps = gsap.utils.toArray<HTMLElement>(".cta-arrow-wrap", scope.current);
+      const onEnter = () =>
+        gsap.to(wraps, {
+          x: (i) => (i === 0 ? -HOVER_SPREAD : HOVER_SPREAD),
+          scale: 1.22,
+          duration: 0.5,
+          ease: "back.out(2.2)",
+        });
+      const onLeave = () =>
+        gsap.to(wraps, { x: 0, scale: 1, duration: 0.4, ease: "power3.out" });
+
+      const el = scope.current!;
+      el.addEventListener("mouseenter", onEnter);
+      el.addEventListener("mouseleave", onLeave);
+
+      return () => {
+        el.removeEventListener("mouseenter", onEnter);
+        el.removeEventListener("mouseleave", onLeave);
+      };
     },
     { scope }
   );
@@ -121,7 +143,13 @@ export default function ContactCTA() {
       data-tag="Say hello →"
       className="about-hoverable relative mt-10 inline-flex cursor-pointer items-center justify-center gap-[clamp(0.75rem,2.5vw,2.5rem)] md:mt-14"
     >
-      <Bracket />
+      {/* Each arrow sits in its own wrapper: the wrapper is the hover channel
+          (spread + scale), the svg inside is the idle/swap channel (y/rotation
+          + x jab). Separate elements means the two never fight over the same
+          transform, so a swap landing mid-hover doesn't reset the hover pose. */}
+      <span className="cta-arrow-wrap inline-flex shrink-0 will-change-transform">
+        <Arrow />
+      </span>
 
       {/* Stacked labels: both share one grid cell; overflow clips the roll */}
       <span className="relative grid justify-items-center overflow-hidden font-black leading-[1.05]">
@@ -133,7 +161,9 @@ export default function ContactCTA() {
         </span>
       </span>
 
-      <Bracket flip />
+      <span className="cta-arrow-wrap inline-flex shrink-0 will-change-transform">
+        <Arrow flip />
+      </span>
     </a>
   );
 }

@@ -6,6 +6,7 @@ import ContactMarquee from "./components/ContactMarquee";
 import Manifesto from "./components/Manifesto";
 import WhatWeDo from "./components/WhatWeDo";
 import SocialLinks from "./components/SocialLinks";
+import StoryLine from "./components/StoryLine";
 import TopHeader from "./components/TopHeader";
 
 export default function Home() {
@@ -45,13 +46,22 @@ export default function Home() {
         </section>
         </div>
 
+        {/* Process storyline — cards threaded by a scroll-drawn line */}
+        <StoryLine />
+
         <AboutBand />
 
         {/* Giant section title — lines slide in from alternating sides */}
         <WhatWeDo />
+      <section className="mt-14 flex flex-1 flex-col justify-end pb-[28vh] md:pb-[36vh]">
+         
+          <ContactMarquee />
+          {/* Studio plate under the marquee — cycling captions */}
+        </section>
+        
 
         {/* Pinned horizontal work showcase — vertical scroll pans the wall */}
-      
+
 
         {/* Manifesto — black band; the scroll-drawn line lands here. Flips the
             difference-blend header white for the whole pass. */}
@@ -62,9 +72,7 @@ export default function Home() {
             black palette on hover. Grows to fill the last of the flex column;
             pb keeps room below it before the curtain footer (triggered at
             #page-content's bottom) reveals. */}
-        <section className="mt-14 flex flex-1 flex-col justify-end pb-[28vh] md:pb-[36vh]">
-          <ContactMarquee />
-        </section>
+        
       </div>
 
 
